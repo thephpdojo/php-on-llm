@@ -11,8 +11,8 @@ class RouterTest {
         $this->router = new Router();
 
         // Define handlers
-        $this->router->addRoute('/user/{id}', function($params) {
-            return "user " . $params['id'];
+        $this->router->addRoute('/user/{id}', function() {
+            return "user " . $_SERVER['ROUTE_PARAMS']['id'];
         });
     }
 

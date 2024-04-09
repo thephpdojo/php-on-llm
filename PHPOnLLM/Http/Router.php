@@ -47,8 +47,11 @@ class Router {
                         }
                     }
 
+                    // Store the params in $_SERVER['ROUTE_PARAMS']
+                    $_SERVER['ROUTE_PARAMS'] = $params;
+
                     // Call the handler function with the parameters
-                    return call_user_func($route['handler'], $params);
+                    return $route['handler']();
                 }
                 return $route['handler']; // If not callable, just return the handler info
             }
