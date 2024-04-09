@@ -9,10 +9,11 @@ for the addRoute and match, just focus on request route matching, no need to con
 
 please speed up the match method by optimizing the regex matching
  */
-namespace PHPOnLLM/Http;
+namespace PHPOnLLM\Http;
 
 class Router {
     private $routes = [];
+    private string $matchingRoute;
 
     public function __construct($routes = []) {
         foreach ($routes as $pattern => $handler) {
@@ -35,6 +36,7 @@ class Router {
 
         foreach ($this->routes as $route) {
             if (preg_match($route['regex'], $requestUri, $matches)) {
+                $this->matchingRoute = $route;
                 // Assuming the handler is a callable function or method
                 if (is_callable($route['handler'])) {
                     // Extract named parameters
@@ -53,6 +55,10 @@ class Router {
         }
 
         return null; // No matching route found
+    }
+
+    public function getMatchingRoute() {
+        return $this->matchingRoute;
     }
 
     private function patternToRegex($pattern) {

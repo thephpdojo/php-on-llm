@@ -1,5 +1,5 @@
 <?php
-namespace PHPOnLLM/Http;
+namespace PHPOnLLM\Http;
 
 class Response
 {
