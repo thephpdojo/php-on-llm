@@ -1,7 +1,7 @@
 <?php
 namespace PHPOnLLM\Session;
 
-class DBSession implements SessionHandlerInterface
+class DBSession implements \SessionHandlerInterface
 {
     private $pdo;
     private $table;
