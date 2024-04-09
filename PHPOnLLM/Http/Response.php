@@ -1,4 +1,6 @@
 <?php
+namespace PHPOnLLM/Http;
+
 class Response
 {
     /**
