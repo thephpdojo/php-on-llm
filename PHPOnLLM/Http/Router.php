@@ -13,7 +13,7 @@ namespace PHPOnLLM\Http;
 
 class Router {
     private $routes = [];
-    private string $matchingRoute;
+    private array $matchingRoute;
 
     public function __construct($routes = []) {
         foreach ($routes as $pattern => $handler) {
@@ -30,7 +30,7 @@ class Router {
         ];
     }
 
-    public function match($requestUri) {
+    public function match() {
         // Automatically fetch the request URI
         $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 

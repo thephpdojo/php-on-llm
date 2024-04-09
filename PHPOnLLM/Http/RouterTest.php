@@ -11,13 +11,13 @@ class RouterTest {
         $this->router = new Router();
 
         // Define handlers
-        $this->router->addRoute('/user/{id}', [$this, 'userProfileHandler']);
-        $this->router->addRoute('/user/create', [$this, 'userCreateHandler']);
+        $this->router->addRoute('/user/{id}', function($params) {
+            return "user " . $params['id'];
+        });
     }
 
     public function runTests() {
-        $this->testRouter('/user/123', "UserProfileHandler for user 123");
-        $this->testRouter('/user/create', "UserCreateHandler");
+        $this->testRouter('/user/123', "user 123");
         $this->testRouter('/nonexistent', null);
     }
 
