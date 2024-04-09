@@ -1,5 +1,5 @@
 <?php
-namespace PHPOnLLM;
+namespace PHPOnLLM\Session;
 
 class DBSession implements SessionHandlerInterface
 {
