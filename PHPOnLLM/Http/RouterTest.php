@@ -9,7 +9,7 @@ class RouterTest extends TestCase {
         // Initialize router with a couple of routes
         $this->router = new Router([
             '/home' => function() { return 'Home Page'; },
-            '/user/{id}' => function($id) { return 'User ' . $id; }
+            '/user/{id}' => function() { return 'User ' . $_SERVER['ROUTE_PARAMS']['id']; }
         ]);
     }
 
