@@ -26,9 +26,9 @@ class RequestTest
         // Simulate a POST request and JSON payload
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $testJsonData = json_encode(['name' => 'John Doe']);
-        file_put_contents('php://input', $testJsonData);
 
         $request = new Request();
+        $request->setRawPostData($testJsonData);
         $result = $request->json();
 
         if (is_array($result) && $result['name'] === 'John Doe') {
@@ -43,9 +43,9 @@ class RequestTest
         // Simulate a POST request and JSON payload
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $testJsonData = json_encode(['parentKey' => ['childKey' => 'value']]);
-        file_put_contents('php://input', $testJsonData);
 
         $request = new Request();
+        $request->setRawPostData($testJsonData);
         $result = $request->json('parentKey.childKey');
 
         if ($result === 'value') {

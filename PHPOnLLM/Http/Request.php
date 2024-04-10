@@ -9,6 +9,12 @@ class Request
      * @var array
      */
     protected $routeParams;
+    private $rawPostData;
+
+    public function setRawPostData($data)
+    {
+        $this->rawPostData = $data;
+    }
 
     /**
      * Request constructor.
@@ -51,13 +57,13 @@ class Request
             return null;
         }
 
+        // Fetch and decode the JSON payload
+        $jsonData = json_decode($this->getRawPostData(), true);
+
         // Check if json_decode failed due to invalid JSON
         if (json_last_error() !== JSON_ERROR_NONE) {
             return null;
         }
-
-        // Fetch and decode the JSON payload
-        $jsonData = json_decode(file_get_contents('php://input'), true);
 
         // Return the whole JSON payload if no key is provided
         if (is_null($key)) {
@@ -140,5 +146,10 @@ class Request
     public function route(string $key, $default = null)
     {
         return isset($this->routeParams[$key]) ? $this->routeParams[$key] : $default;
+    }
+
+    private function getRawPostData()
+    {
+        return $this->rawPostData !== null ? $this->rawPostData : file_get_contents('php://input');
     }
 }
