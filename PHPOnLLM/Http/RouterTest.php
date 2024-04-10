@@ -1,52 +1,51 @@
 <?php
+use PHPOnLLM\Http\Router;
+use PHPUnit\Framework\TestCase;
 
-namespace PHPOnLLM\Http;
-
-require 'Router.php';  // Make sure this path is correct for the Router class
-
-class RouterTest {
+class RouterTest extends TestCase {
     private $router;
 
-    public function __construct() {
-        $this->router = new Router();
-
-        // Define handlers
-        $this->router->addRoute('/user/{id}', function() {
-            return "user " . $_SERVER['ROUTE_PARAMS']['id'];
-        });
-
-        $this->router->addRoute('/about', function() {
-            return "about us";
-        });
+    protected function setUp(): void {
+        // Initialize router with a couple of routes
+        $this->router = new Router([
+            '/home' => function() { return 'Home Page'; },
+            '/user/{id}' => function($id) { return 'User ' . $id; }
+        ]);
     }
 
-    public function run() {
-        $this->testRouter('/user/123', "user 123");
+    public function testMatchExistingRoute() {
+        // Simulate setting REQUEST_URI for the test
+        $_SERVER['REQUEST_URI'] = '/home';
 
-
-        if ($this->router->getMatchingRoute()['pattern'] === "/user/{id}") {
-            echo "PASS: Test for matching route /user/{id}\n";
-        } else {
-            echo "FAIL: Test for matching route /user/{id}\n";
-        }
-
-        $this->testRouter('/user/456?q=1', "user 456");
-        $this->testRouter('/about', "about us");
-        $this->testRouter('/nonexistent', null);
-    }
-
-    private function testRouter($path, $expectedResult) {
-        $_SERVER['REQUEST_URI'] = $path;
         $result = $this->router->match();
 
-        if ((is_callable($result) && call_user_func($result) === $expectedResult) || $result === $expectedResult) {
-            echo "PASS: Test for path '$path'\n";
-        } else {
-            echo "FAIL: Test for path '$path'. Expected '$expectedResult', got '" . print_r($result, true) . "'\n";
-        }
+        $this->assertEquals('Home Page', $result);
+    }
+
+    public function testMatchRouteWithParameters() {
+        $_SERVER['REQUEST_URI'] = '/user/123';
+
+        $result = $this->router->match();
+
+        $this->assertEquals('User 123', $result);
+        // Check if parameters are correctly set
+        $this->assertEquals(['id' => '123'], $_SERVER['ROUTE_PARAMS']);
+    }
+
+    public function testMatchNonExistingRoute() {
+        $_SERVER['REQUEST_URI'] = '/non-existing';
+
+        $result = $this->router->match();
+
+        $this->assertNull($result);
+    }
+
+    public function testAddRoute() {
+        $this->router->addRoute('/about', function() { return 'About Page'; });
+
+        $_SERVER['REQUEST_URI'] = '/about';
+        $result = $this->router->match();
+
+        $this->assertEquals('About Page', $result);
     }
 }
-
-// Usage
-$test = new \PHPOnLLM\Http\RouterTest();
-$test->run();

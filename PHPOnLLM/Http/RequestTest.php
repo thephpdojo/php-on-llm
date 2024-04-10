@@ -1,68 +1,70 @@
 <?php
+use PHPOnLLM\Http\Request;
+use PHPUnit\Framework\TestCase;
 
-namespace PHPOnLLM\Http;
-
-require_once 'Request.php'; // Assume your Request class is defined in this file
-
-class RequestTest
+class RequestTest extends TestCase
 {
-    public function testJsonMethodReturnsNullForNonPostRequests()
+    private $request;
+
+    protected function setUp(): void
     {
-        // Simulate a non-POST request
-        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_GET = ['queryKey' => 'queryValue'];
+        $_POST = ['postKey' => 'postValue'];
+        $_SERVER = [
+            'REQUEST_METHOD' => 'POST',
+            'HTTP_X_REQUESTED_WITH' => 'xmlhttprequest',
+            'HTTP_TEST_HEADER' => 'headerValue'
+        ];
 
-        $request = new Request();
-        $result = $request->json();
-
-        if ($result === null) {
-            echo "testJsonMethodReturnsNullForNonPostRequests: PASSED\n";
-        } else {
-            echo "testJsonMethodReturnsNullForNonPostRequests: FAILED\n";
-        }
+        $this->request = new Request(['routeKey' => 'routeValue']);
+        $this->request->setRawPostData('{"jsonKey": "jsonValue"}');
     }
 
-    public function testJsonMethodReturnsArrayForPostRequestsWithoutKey()
+    public function testQuery()
     {
-        // Simulate a POST request and JSON payload
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $testJsonData = json_encode(['name' => 'John Doe']);
-
-        $request = new Request();
-        $request->setRawPostData($testJsonData);
-        $result = $request->json();
-
-        if (is_array($result) && $result['name'] === 'John Doe') {
-            echo "testJsonMethodReturnsArrayForPostRequestsWithoutKey: PASSED\n";
-        } else {
-            echo "testJsonMethodReturnsArrayForPostRequestsWithoutKey: FAILED\n";
-        }
+        $this->assertEquals('queryValue', $this->request->query('queryKey'));
+        $this->assertNull($this->request->query('nonExistingKey'));
     }
 
-    public function testJsonMethodReturnsNestedValueForPostRequests()
+    public function testPost()
     {
-        // Simulate a POST request and JSON payload
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $testJsonData = json_encode(['parentKey' => ['childKey' => 'value']]);
-
-        $request = new Request();
-        $request->setRawPostData($testJsonData);
-        $result = $request->json('parentKey.childKey');
-
-        if ($result === 'value') {
-            echo "testJsonMethodReturnsNestedValueForPostRequests: PASSED\n";
-        } else {
-            echo "testJsonMethodReturnsNestedValueForPostRequests: FAILED\n";
-        }
+        $this->assertEquals('postValue', $this->request->post('postKey'));
+        $this->assertNull($this->request->post('nonExistingKey'));
     }
 
-    public function run()
+    public function testJson()
     {
-        $this->testJsonMethodReturnsNullForNonPostRequests();
-        $this->testJsonMethodReturnsArrayForPostRequestsWithoutKey();
-        $this->testJsonMethodReturnsNestedValueForPostRequests();
+        $this->assertEquals(['jsonKey' => 'jsonValue'], $this->request->json());
+        $this->assertEquals('jsonValue', $this->request->json('jsonKey'));
+        $this->assertNull($this->request->json('nonExistingKey'));
+    }
+
+    public function testHeader()
+    {
+        $this->assertEquals('headerValue', $this->request->header('Test-Header'));
+        $this->assertNull($this->request->header('Non-Existing-Header'));
+    }
+
+    public function testMethod()
+    {
+        $this->assertEquals('POST', $this->request->method());
+    }
+
+    public function testIsAjax()
+    {
+        $this->assertTrue($this->request->isAjax());
+    }
+
+    public function testServer()
+    {
+        $this->assertEquals('xmlhttprequest', $this->request->server('HTTP_X_REQUESTED_WITH'));
+        $this->assertNull($this->request->server('NON_EXISTING_KEY'));
+        $this->assertIsArray($this->request->server());
+    }
+
+    public function testRoute()
+    {
+        $this->assertEquals('routeValue', $this->request->route('routeKey'));
+        $this->assertNull($this->request->route('nonExistingKey'));
     }
 }
-
-// Running the tests
-$test = new RequestTest();
-$test->run();

@@ -1,53 +1,51 @@
 <?php
+use PHPOnLLM\Http\Response;
+use PHPUnit\Framework\TestCase;
 
-namespace PHPOnLLM\Http;
-
-require 'Response.php'; // Adjust the path as needed
-
-class ResponseTest
+class ResponseTest extends TestCase
 {
-    public function testJson()
+    private $response;
+
+    protected function setUp(): void
     {
-        $response = new Response();
-        $data = ['message' => 'Test'];
+        $this->response = new Response();
+    }
 
-        ob_start();
-        $response->json($data);
-        $output = ob_get_clean();
-
-        $expected = json_encode($data);
-        if ($output === $expected) {
-            echo "testJson passed\n";
+    public function testSendHeader()
+    {
+        if (php_sapi_name() == 'cli') {
+            $this->expectOutputString('');
+            $this->response->sendHeader('Content-Type: text/plain');
         } else {
-            echo "testJson failed\n";
+            // Note: In non-CLI environments, testing headers directly is tricky
+            // because they are sent to the browser. You may need to mock or use
+            // output buffering to capture headers.
+            $this->markTestIncomplete('Header sending cannot be tested in non-CLI mode.');
         }
+    }
+
+    public function testFileNotFound()
+    {
+        $this->expectOutputString('File not found.');
+        $this->response->file('/path/to/nonexistent/file.txt');
     }
 
     public function testFile()
     {
-        // Create a temporary file and write content to it
-        $filePath = '/tmp/testfile.txt';
-        $fileContent = 'This is a test.';
-        file_put_contents($filePath, $fileContent);
+        // For actual file serving test, we need to create a temporary file
+        $tempFile = tmpfile();
+        fwrite($tempFile, 'Hello World');
+        $metaData = stream_get_meta_data($tempFile);
+        $tempFilePath = $metaData['uri'];
 
-        $response = new Response();
+        $this->expectOutputString('Hello World');
+        $this->response->file($tempFilePath);
+        fclose($tempFile); // Close the file to clean up
+    }
 
-        ob_start();
-        $response->file($filePath);
-        $output = ob_get_clean();
-
-        // Delete the temporary file
-        unlink($filePath);
-
-        if ($output === $fileContent) {
-            echo "testFile passed\n";
-        } else {
-            echo "testFile failed\n";
-        }
+    public function testJson()
+    {
+        $this->expectOutputString(json_encode(['key' => 'value']));
+        $this->response->json(['key' => 'value']);
     }
 }
-
-// Running the tests
-$test = new ResponseTest();
-$test->testJson();
-$test->testFile();
