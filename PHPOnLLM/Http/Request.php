@@ -1,5 +1,5 @@
 <?php
-namespace PHPOnLLM/Http;
+namespace PHPOnLLM\Http;
 
 class Request
 {
@@ -42,6 +42,43 @@ class Request
     public function post(string $key, $default = null)
     {
         return isset($_POST[$key]) ? $_POST[$key] : $default;
+    }
+
+    public function json($key = null)
+    {
+        // Check if the request method is POST
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return null;
+        }
+
+        // Check if json_decode failed due to invalid JSON
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return null;
+        }
+
+        // Fetch and decode the JSON payload
+        $jsonData = json_decode(file_get_contents('php://input'), true);
+
+        // Return the whole JSON payload if no key is provided
+        if (is_null($key)) {
+            return $jsonData;
+        }
+
+        // Split the key by dots to access nested arrays
+        $keys = explode('.', $key);
+        $data = $jsonData;
+
+        // Iterate over the keys to find the requested nested value
+        foreach ($keys as $k) {
+            if (isset($data[$k])) {
+                $data = $data[$k];
+            } else {
+                // Return null if the key doesn't exist
+                return null;
+            }
+        }
+
+        return $data;
     }
 
     /**
