@@ -3,6 +3,13 @@ namespace PHPOnLLM\Http;
 
 class Response
 {
+    public function sendHeader(string $header) {
+        if (php_sapi_name() != 'cli') {
+            // PHP is not running in CLI mode
+            header($header);
+        }
+    }
+
     /**
      * Serve a file with the appropriate header for its type.
      *
@@ -14,7 +21,7 @@ class Response
         // Check if the file exists
         if (!file_exists($filePath)) {
             // You could also use a 404 status header here
-            header("HTTP/1.0 404 Not Found");
+            $this->sendHeader("HTTP/1.0 404 Not Found");
             die("File not found.");
         }
 
@@ -23,7 +30,7 @@ class Response
         $mimeType = $this->getMimeType($fileExtension);
 
         // Set the content type header
-        header("Content-Type: $mimeType");
+        $this->sendHeader("Content-Type: $mimeType");
 
         // Read and serve the file
         readfile($filePath);
@@ -38,7 +45,7 @@ class Response
     public function json($data): void
     {
         // Set the content type header for JSON
-        header('Content-Type: application/json');
+        $this->sendHeader('Content-Type: application/json');
 
         // Convert the data to JSON and output
         echo json_encode($data);

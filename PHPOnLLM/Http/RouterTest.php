@@ -20,7 +20,7 @@ class RouterTest {
         });
     }
 
-    public function runTests() {
+    public function run() {
         $this->testRouter('/user/123', "user 123");
 
 
@@ -49,4 +49,4 @@ class RouterTest {
 
 // Usage
 $test = new \PHPOnLLM\Http\RouterTest();
-$test->runTests();
+$test->run();

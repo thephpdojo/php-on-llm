@@ -55,7 +55,7 @@ class RequestTest
         }
     }
 
-    public function runAllTests()
+    public function run()
     {
         $this->testJsonMethodReturnsNullForNonPostRequests();
         $this->testJsonMethodReturnsArrayForPostRequestsWithoutKey();
@@ -65,4 +65,4 @@ class RequestTest
 
 // Running the tests
 $test = new RequestTest();
-$test->runAllTests();
+$test->run();
