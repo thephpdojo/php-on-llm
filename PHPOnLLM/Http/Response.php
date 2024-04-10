@@ -22,7 +22,7 @@ class Response
         if (!file_exists($filePath)) {
             // You could also use a 404 status header here
             $this->sendHeader("HTTP/1.0 404 Not Found");
-            die("File not found.");
+            return;
         }
 
         // Determine the MIME type based on the file extension

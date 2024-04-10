@@ -26,7 +26,7 @@ class ResponseTest extends TestCase
 
     public function testFileNotFound()
     {
-        $this->expectOutputString('File not found.');
+        $this->expectOutputString('');
         $this->response->file('/path/to/nonexistent/file.txt');
     }
 
