@@ -14,6 +14,10 @@ class RouterTest {
         $this->router->addRoute('/user/{id}', function() {
             return "user " . $_SERVER['ROUTE_PARAMS']['id'];
         });
+
+        $this->router->addRoute('/about', function() {
+            return "about us";
+        });
     }
 
     public function runTests() {
@@ -27,6 +31,7 @@ class RouterTest {
         }
 
         $this->testRouter('/user/456?q=1', "user 456");
+        $this->testRouter('/about', "about us");
         $this->testRouter('/nonexistent', null);
     }
 
