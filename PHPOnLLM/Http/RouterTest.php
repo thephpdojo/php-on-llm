@@ -32,14 +32,6 @@ class RouterTest {
             echo "FAIL: Test for path '$path'. Expected '$expectedResult', got '" . print_r($result, true) . "'\n";
         }
     }
-
-    public function userProfileHandler($params) {
-        return "UserProfileHandler for user " . $params['id'];
-    }
-
-    public function userCreateHandler() {
-        return "UserCreateHandler";
-    }
 }
 
 // Usage
