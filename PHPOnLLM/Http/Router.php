@@ -25,6 +25,7 @@ class Router {
         $regex = $this->patternToRegex($pattern);
         // Pre-compile regex and store handler and regex
         $this->routes[] = [
+            'pattern' => $pattern,
             'regex' => $regex,
             'handler' => $handler
         ];

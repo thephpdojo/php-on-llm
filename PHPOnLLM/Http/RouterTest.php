@@ -18,6 +18,14 @@ class RouterTest {
 
     public function runTests() {
         $this->testRouter('/user/123', "user 123");
+
+
+        if ($this->router->getMatchingRoute()['pattern'] === "/user/{id}") {
+            echo "PASS: Test for matching route /user/{id}\n";
+        } else {
+            echo "FAIL: Test for matching route /user/{id}\n";
+        }
+
         $this->testRouter('/user/456?q=1', "user 456");
         $this->testRouter('/nonexistent', null);
     }
