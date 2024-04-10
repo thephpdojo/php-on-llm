@@ -18,7 +18,7 @@ class RouterTest {
 
     public function runTests() {
         $this->testRouter('/user/123', "user 123");
-        $this->testRouter('/user/123?q=1', "user 123");
+        $this->testRouter('/user/456?q=1', "user 456");
         $this->testRouter('/nonexistent', null);
     }
 
