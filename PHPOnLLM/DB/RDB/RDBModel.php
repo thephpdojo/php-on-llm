@@ -1,7 +1,7 @@
 <?php
 namespace PHPOnLLM\DB\RDB;
 
-abstract class Model {
+abstract class RDBModel {
     protected $db;
     protected $table;
 
