@@ -13,6 +13,10 @@ abstract class Model {
     // Method to set the table name, must be implemented by the child class
     abstract protected function setTable();
 
+    public function getTable() {
+        return $this->table;
+    }
+
     public function find($id) {
         return $this->db->get($this->table, ['id', '=', $id])->first();
     }
