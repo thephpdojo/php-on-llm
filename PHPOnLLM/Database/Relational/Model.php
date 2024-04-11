@@ -1,4 +1,6 @@
 <?php
+namespace PHPOnLLM\Database\Relational;
+
 abstract class Model {
     protected $db;
     protected $table;
