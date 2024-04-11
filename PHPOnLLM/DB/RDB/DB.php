@@ -1,5 +1,5 @@
 <?php
-namespace PHPOnLLM\Database\Relational;
+namespace PHPOnLLM\DB\RDB;
 
 class DB {
     private static $instance = null;
